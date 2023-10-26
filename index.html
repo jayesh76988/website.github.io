@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            /* list-style: none; */
+        }
+
+        #firstDiv {
+            display: flex;
+            flex-direction: column;
+            /* border: 1px solid black; */
+            align-items: center;
+            /* justify-content: center; */
+            gap: 10px;
+        }
+
+        fieldset {
+            margin: 10px;
+        }
+
+        h3 {
+            margin: 15px;
+            font-size: 1.4em;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif, Courier, monospace;
+        }
+
+        legend {
+            margin-left: 20px;
+            /* border: 1px solid black; */
+        }
+
+        button {
+            font-size: 1em;
+            border: none;
+            padding: 5px;
+            color: navy;
+            width: 100px;
+            /* border: 2px solid blue; */
+            box-shadow: 2px 2px red
+        }
+
+        #textarea,
+        .textarea {
+            padding-left: 15px;
+            min-height: 50px;
+            font-size: 1.3em;
+            background-color: rgba(112, 66, 82, 0.221);
+            /* resize: none; */
+            padding-top: 15px;
+        }
+
+        #boaredTextarea {
+            max-height: 100px;
+            overflow: auto;
+        }
+
+        label {
+            padding-left: 15px;
+
+        }
+
+        #field {
+            margin-top: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="firstDiv">
+        <h1>Welcome to my API class</h1>
+        <h2>in this page you can do various activities</h2>
+    </div>
+
+    <div id="cantainer">
+        <h3>click on 'cat' to see facts about cat</h3>
+        <fieldset>
+            <legend><button id="cat" class="cat">cat</button></legend>
+            <!-- <textarea name="facts" id="textarea" rows="" readonly="true" ></textarea> -->
+            <div class="textarea" id="textarea">
+                <ul id="catFact">
+
+                </ul>
+            </div>
+        </fieldset>
+        <h3>click on 'board' to find activities</h3>
+        <fieldset>
+            <legend><button id="boared">boared?</button></legend>
+            <div class="boared textarea" id="boaredTextarea">
+                <ul id="boaredUl">
+
+                </ul>
+            </div>
+        </fieldset>
+        <h3>enter name and click on 'check age' to know the age</h3>
+        <fieldset>
+            <legend><button id="agify">check age</button></legend>
+            <div id="field">
+                <label for="text">Enter name:</label>
+                <input type="text" name="text" id="text">
+            </div>
+            <div class="agify textarea" id="agifyTextarea">
+                <ul>
+                    <li id="name" style="list-style: none;"></li>
+                    <li id="age" style="list-style: none;"></li>
+
+                </ul>
+            </div>
+        </fieldset>
+    </div>
+
+
+
+
+    <script>
+        let cantainer = document.querySelector('#cantainer')
+        let catFact = document.querySelector('#catFact')
+        let boaredTextarea = document.querySelector('#boaredTextarea')
+        let agifyTextarea = document.querySelector('#agifyTextarea')
+        let name = document.querySelector('#name')
+        let age = document.querySelector('#age')
+        let li = document.querySelector('li')
+        let input = document.querySelector('#text')
+        let boaredUl = document.querySelector('#boaredUl')
+
+        cantainer.addEventListener('click', function (e) {
+            if (e.target.id == 'cat') {
+                let point = fetch('https://catfact.ninja/fact')
+                    .then((value) => { return value.json() })
+                    .then((data) => {
+                        console.log(data.fact)
+                        catFact.innerHTML = `<li style="list-style:inside disc"> ${data.fact} </li>`
+                    })
+            }
+            if (e.target.id == 'boared') {
+                let point = fetch('https://www.boredapi.com/api/activity')
+                    .then(function (value) {
+                        return value.json()
+                    }).then(function (data) {
+                        console.log(data.activity)
+                        boaredUl.innerHTML += `<li style="list-style:inside disc"><a href='https://www.google.com/search?q=how +to+${data.activity}' target="_blank" > ${data.activity}</a> </li>`
+                    })
+            }
+            if (e.target.id == 'agify') {
+                let nameText = input.value
+                let status = false;
+                for(let i of nameText){
+                    // console.log(i)
+                    if(!isNaN(i)){
+                        // console.log(status)
+                        status=true;
+                    }
+                }
+                console.log(status)
+                // console.log(toString(nameText))
+                if (status || nameText=='') {
+                    alert('please enter valid name')
+                }
+                else {
+                    // console.log(nameText)
+                    let point = fetch(`https://api.agify.io/?name=${nameText}`)
+                        .then(function (value) {
+                            return value.json()
+                        }).then(function (data) {
+                            console.log(data.activity)
+                            name.innerText = data.name;
+                            age.innerText = data.age;
+                            name.setAttribute('style', "list-style:inside disc")
+                            age.setAttribute('style', "list-style:inside disc")
+                            input.value = ''
+                        })
+                }
+            }
+        })
+
+
+        fetch('https://api.agify.io/?name=meelad')
+            .then(function (value) {
+                return value.json()
+            }).then(function (data) {
+                // console.log(data.activity)
+                // name.innerText = data.name;
+                // age.innerText = data.age
+            })
+
+       
+
+
+
+    </script>
+
+</body>
+
+</html>
